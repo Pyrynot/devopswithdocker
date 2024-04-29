@@ -1,0 +1,21 @@
+FROM alpine:3.19.1
+
+WORKDIR /app
+
+COPY . .
+
+ENV REQUEST_ORIGIN=*
+ENV GOPATH=/usr/local/go
+
+RUN apk add --no-cache go && \
+    go build && \
+    addgroup -S appgroup && adduser -S appuser -G appgroup && \
+    chown -R appuser:appgroup /app && \
+    rm -rf /var/cache/apk/* /tmp/* /var/tmp/* && \
+    apk del go
+    
+USER appuser
+
+EXPOSE 8080
+
+CMD ["./server"]

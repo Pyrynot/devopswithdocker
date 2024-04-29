@@ -1,0 +1,21 @@
+FROM alpine:3.16
+
+WORKDIR /usr/src/app
+
+EXPOSE 5000
+
+COPY . .
+
+ENV REACT_APP_BACKEND_URL=http://localhost:8080
+
+RUN apk add --no-cache nodejs npm && \
+    npm install && \
+    npm run build && \
+    npm install -g serve && \
+    adduser -S appuser && \
+    rm -rf ./node_modules ./src && \
+    rm -rf /var/lib/apt/lists/*
+
+USER appuser
+
+CMD ["serve", "-s", "-l", "5000", "build"]

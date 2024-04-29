@@ -1,0 +1,19 @@
+FROM golang:1.16-alpine
+
+WORKDIR /app
+
+COPY . .
+
+ENV REQUEST_ORIGIN=*
+ENV GOPATH=/usr/local/go
+
+RUN go build && \
+    addgroup -S appgroup && adduser -S appuser -G appgroup && \
+    chown -R appuser:appgroup /app && \
+    rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
+    
+USER appuser
+
+EXPOSE 8080
+
+CMD ["./server"]
